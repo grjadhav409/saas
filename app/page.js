@@ -1,14 +1,19 @@
 import React from "react";
-import Navbar from "./components/Navbar";
 import ButtonLogin from "@/app/components/ButtonLogin";
 import ListFeatures from "./components/ListFeatures";
 import FaqList from "./components/FaqList";
 import Image from "next/image";
 import appImg from "./assets/appImg.png";
+import { auth } from "@/auth";
+// import clientPromise from "@/libs/mongo";
 
-export default function Home() {
+export default async function Home() {
   let isLoggedin = true;
   let username = "G R Jadhav";
+
+  const session = await auth();
+  // console.log(session);
+
   let price = 999;
   let features = [
     "Unlimited profile photo generation",
@@ -19,14 +24,39 @@ export default function Home() {
 
   let faqs = [
     { question: "How does it work?", answer: "It works" },
-    { question: "Will i Get Refund?", answer: "yes" },
-    { question: "Some other question?", answer: "some other ans" },
+    { question: "Will i Get Refund?", answer: "Maybe" },
+    { question: "Some other question?", answer: "Some other ans" },
   ];
   return (
     <main>
       {/* HEADER */}
       <section>
-        <Navbar />
+        <nav className="flex justify-between items-center p-4 bg-grey shadow-md">
+          <div className="text-xl font-bold">ProfileAI</div>
+          <ul className="flex space-x-6">
+            <li>
+              <a href="/" className="text-gray-700 hover:text-blue-500 ">
+                Home
+              </a>
+            </li>
+            <li>
+              <a href="#pricing" className="text-gray-700 hover:text-blue-500">
+                Pricing
+              </a>
+            </li>
+            <li>
+              <a href="#faq" className="text-gray-700 hover:text-blue-500">
+                FAQ
+              </a>
+            </li>
+            <li>
+              <ButtonLogin
+                session={session}
+                extraStyle=" text-gray-700 hover:text-blue-500"
+              ></ButtonLogin>
+            </li>
+          </ul>
+        </nav>
       </section>
       {/* HERO */}
       <section className="px-8 py-32 text-center  max-w-3xl mx-auto">
@@ -45,6 +75,7 @@ export default function Home() {
           <ButtonLogin
             isLoggedin={isLoggedin}
             username={username}
+            session={session}
           ></ButtonLogin>
         </div>
       </section>
@@ -69,7 +100,7 @@ export default function Home() {
                 return <ListFeatures key={feature} text={feature} />;
               })}
             </ul>
-            <ButtonLogin isLoggedin={isLoggedin}></ButtonLogin>
+            <ButtonLogin session={session}></ButtonLogin>
           </div>
         </div>
       </section>

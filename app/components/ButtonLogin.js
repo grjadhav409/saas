@@ -3,25 +3,31 @@
 
 import Link from "next/link";
 import React from "react";
+import { signIn } from "next-auth/react"; //Do not import this from auth file > security > this is client comp
 
-const ButtonLogin = ({ isLoggedin, username, isNav }) => {
-  if (isLoggedin) {
+const ButtonLogin = ({ session, extraStyle }) => {
+  const dashboardUrl = "/dashboard";
+  if (session) {
     return (
-      <div>
-        <Link className="btn btn-primary" href="/dashboard">
-          Welcome Back {username}
-        </Link>
-      </div>
-    );
-  }
-  if (isNav) {
-    return (
-      <Link href="/login">
-        <button className="text-gray-700 hover:text-blue-500">Login</button>
+      <Link
+        href={dashboardUrl}
+        className={`btn btn-primary ${extraStyle ? extraStyle : ""}`}
+      >
+        Welcome Back {session.user.name || "Friend"}
       </Link>
     );
   }
-  return <button className="btn btn-primary">Login</button>;
+
+  return (
+    <button
+      className={`btn btn-primary ${extraStyle ? extraStyle : ""}`}
+      onClick={() => {
+        signIn(undefined, { callbackUrl: dashboardUrl });
+      }}
+    >
+      Get Started
+    </button>
+  );
 };
 
 export default ButtonLogin;
